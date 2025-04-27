@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste API</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+<body>
+    <header>
+        <img src="./img/logo.png" alt="logo" width="50px">
+        
+        <div class="menu" id="home">
+            <div  class="menu-hover">
+                <a href="#home">Home</a>
+            </div>
+            <div  class="menu-hover">
+                <a href="#about">About</a>
+            </div>
+            <div  class="menu-hover">
+                <a href="https://pokeapi.co/docs/v2" target="_blank">API v2</a> 
+            </div>
+            <div  class="menu-hover">
+                <a href="https://pokeapi.co/docs/graphql" target="_blank">GraphQL v1beta</a>  
+            </div>
+        </div>
+
+        <!--- menu list-->
+        <div class="menu-list-mobile">
+            <ul>
+                <img src="./img/menu.png" width="50px" class="menu-img"/>
+                <li><a class="menu-list" href="#home">Home</a></li>
+                <li><a class="menu-list" href="#about">About</a></li>
+                <li><a class="menu-list" href="https://pokeapi.co/docs/v2" target="_blank">API v2</a></li> 
+                <li><a class="menu-list" href="https://pokeapi.co/docs/graphql" target="_blank">GraphQL v1beta</a></li>
+            </ul>
+        </div>
+
+    </header>
+
+    <article>
+        <div class="bg-article">
+            <div class="bg-article-logo">
+                <img src="./img/logo.png" alt="logo" width="200px">
+                <h2>The RESTful Pokémon API</h2>
+                <h3>Serving over 10 billion API calls each month!</h3>
+            </div>
+        </div>
+        <div class="about" id="about">
+            <h3>All the Pokémon data you'll ever need in one place,<br/>
+            easily accessible through a modern free open-source RESTful API.</h3>
+
+            <label for="pokemon-select" class="select"><h3>Selecione um Pokémon:</h3></label><br/>
+            <select id="pokemon-select" class="select">
+                <option value="">Selecione</option>
+            </select>
+        
+            <button id="carregar-info" class="btn">Carregar Informações</button>  
+            
+            <div id="pokemon-info" class="info">
+                <div class="bg-info">
+                    
+                </div>
+            </div>
+
+        </div>   
+
+    </article>
+    <footer>
+        <div class="footer-linha"></div>
+        <br/>
+        Teste de Comunicação API <a href="https://pokeapi.co/">https://pokeapi.co/</a>
+    </footer>
+</body>
+
+    <script>
+        // Carregar todos os Pokémon e popular o select
+        window.onload = async function() {
+            const select = document.getElementById('pokemon-select');
+            try {
+                const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=30'); 
+                const data = await response.json();
+                
+                // Adicionar opções no select
+                data.results.forEach(pokemon => {
+                    const option = document.createElement('option');
+                    option.value = pokemon.url;  // URL de cada Pokémon, que contém o ID
+                    option.textContent = pokemon.name;  // Nome do Pokémon
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar os Pokémon', error);
+            }
+        };
+
+        // Ao clicar, buscar o Pokémon pelo ID
+        document.getElementById('carregar-info').addEventListener('click', async () => {
+            const select = document.getElementById('pokemon-select');
+            const selectedUrl = select.value;
+
+            if (selectedUrl) {
+                try {
+                    const response = await fetch(selectedUrl);  // Requisição para o Pokémon selecionado
+                    const pokemon = await response.json();
+
+                    // Exibir informações
+                    const pokemonInfoDiv = document.getElementById('pokemon-info');
+                    pokemonInfoDiv.innerHTML = `
+                        <h2>${pokemon.name}</h2>
+                        <p>ID: ${pokemon.id}</p>
+                        <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+                        <p>Altura: ${pokemon.height}</p>
+                        <p>Peso: ${pokemon.weight}</p>
+                    `;
+                } catch (error) {
+                    console.error('Erro ao carregar o Pokémon', error);
+                }
+            }
+        });
+    </script>
+
+
+</html>
